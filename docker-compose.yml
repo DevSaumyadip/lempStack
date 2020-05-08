@@ -6,39 +6,39 @@ services:
        container_name: nginx
        restart: unless-stopped
        ports:
-           - "8080:80"
+            - "8080:80"
        volumes:
-           - ./public_html:/public_html
-           - ./conf.d:/etc/nginx/conf.d
-           - /etc/localtime:/etc/localtime
-           - ./logs/nginx-error.log:/var/log/nginx/error.log
-           - ./logs/nginx-access.log:/var/log/nginx/access.log
+            - ./public_html:/public_html
+            - ./conf.d:/etc/nginx/conf.d
+            - /etc/localtime:/etc/localtime
+            - ./logs/nginx-error.log:/var/log/nginx/error.log
+            - ./logs/nginx-access.log:/var/log/nginx/access.log
        networks:
-           - nginxphp
+            - nginxphp
 
     php:
        image: php:fpm
        container_name: php-fpm
        restart: unless-stopped
        volumes:
-           - ./public_html:/public_html
+            - ./public_html:/public_html
        expose:
-           - 9000
+            - 9000
        networks:
-           - nginxphp
-
-    phpmyadmin:
-        image: phpmyadmin/phpmyadmin:latest
-        container_name: phpmyadmin
+            - nginxphp
+    
+    mySql:
+        image: mysql/mysql-server:latest
+        container_name: mysql
         restart: unless-stopped
+        restart: always
+        environment:
+            - MYSQL_DATABASE= 'root'
+            - MYSQL_USER=root
+            - MYSQL_ROOT_PASSWORD=password
+            - MYSQL_PASSWORD=password
         ports:
-            - '8081:80'
-        # environment:
-        #     PMA_HOST: 192.168.31.100
-        #     PMA_PORT: 3306
-        #     MYSQL_ROOT_PASSWORD: password
-        volumes:
-            - "./phpmyadmin/sessions:/sessions"
+            - "3306:3306"
         networks:
             - nginxphp
 
