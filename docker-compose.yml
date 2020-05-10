@@ -48,23 +48,5 @@ services:
             - php
             - mySql
 
-    
-    # phpmyadmin:
-    #     image: phpmyadmin/phpmyadmin:fpm-alpine
-    #     container_name: phpmyadmin
-    #     restart: always
-    #     environment:
-    #            PMA_HOST: mySql
-    #     ports:
-    #         - 8081:80
-    #     volumes:
-    #         - /sessions
-    #         - ~/docker/phpmyadmin/config.user.inc.php:/etc/phpmyadmin/config.user.inc.php
-    #         - /custom/phpmyadmin/theme/:/www/themes/theme/
-    #     networks:
-    #         - nginxphp
-    #     depends_on:
-    #         - mySql
-
 networks:
      nginxphp:
