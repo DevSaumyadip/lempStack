@@ -1,32 +1,7 @@
 version: '3.6'
 
 services:
-    web:
-       image: nginx:latest
-       container_name: nginx
-       restart: unless-stopped
-       ports:
-            - "8080:80"
-       volumes:
-            - ./public_html:/public_html
-            - ./conf.d:/etc/nginx/conf.d
-            - /etc/localtime:/etc/localtime
-            - ./logs/nginx-error.log:/var/log/nginx/error.log
-            - ./logs/nginx-access.log:/var/log/nginx/access.log
-       networks:
-            - nginxphp
 
-    php:
-       image: php:fpm
-       container_name: php-fpm
-       restart: unless-stopped
-       volumes:
-            - ./public_html:/public_html
-       expose:
-            - 9000
-       networks:
-            - nginxphp
-    
     mySql:
         image: mysql/mysql-server:latest
         container_name: mysql
@@ -41,6 +16,55 @@ services:
             - "3306:3306"
         networks:
             - nginxphp
+
+    php:
+        image: php:fpm
+        container_name: php-fpm
+        restart: unless-stopped
+        volumes:
+             - ./public_html:/public_html
+        expose:
+             - 9000
+        networks:
+             - nginxphp
+        depends_on:
+             - mySql
+
+    web:
+       image: nginx:latest
+       container_name: nginx
+       restart: unless-stopped
+       ports:
+            - "8080:80"
+       volumes:
+            - ./public_html:/public_html
+            - ./conf.d:/etc/nginx/conf.d
+            -  /etc/localtime:/etc/localtime
+            - ./logs/nginx-error.log:/var/log/nginx/error.log
+            - ./logs/nginx-access.log:/var/log/nginx/access.log
+       networks:
+            - nginxphp
+       depends_on:
+            - php
+            - mySql
+
+    
+    # phpmyadmin:
+    #     image: phpmyadmin/phpmyadmin:fpm-alpine
+    #     container_name: phpmyadmin
+    #     restart: always
+    #     environment:
+    #            PMA_HOST: mySql
+    #     ports:
+    #         - 8081:80
+    #     volumes:
+    #         - /sessions
+    #         - ~/docker/phpmyadmin/config.user.inc.php:/etc/phpmyadmin/config.user.inc.php
+    #         - /custom/phpmyadmin/theme/:/www/themes/theme/
+    #     networks:
+    #         - nginxphp
+    #     depends_on:
+    #         - mySql
 
 networks:
      nginxphp:
